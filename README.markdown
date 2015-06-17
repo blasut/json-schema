@@ -6,6 +6,15 @@ specification.
 
 WIP: only just started
 
+## Fork:
+
+- Update to Draft 4
+- Add core
+- Add schema validation
+- Add Hyper-Schema
+- Make sure the error messages are good.
+- Maybe make some sort of plugin to hunchentoot or other webservice, generate some api stuff?
+
 ## Usage
 
 ## Installation
