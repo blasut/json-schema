@@ -20,6 +20,15 @@
 (defclass schema ()
   ((obj :initarg :obj)))
 
+;; To validate we should walk all the parameters, including children...
+;; Change the validate-schema method to be a "walker" method, with special cases for:
+;; - top-level
+;; - children
+;; Validate the different object types (already implemented)
+;; Validate for each of the levels in the JSON.
+;; Add the hyper media validations
+
+
 (defmethod validate-schema ((schema schema) (json string))
   (let ((json (load-json json)))
     (let ((errors (%validate json (slot-value schema 'obj) :schema nil)))
