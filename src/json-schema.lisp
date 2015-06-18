@@ -12,11 +12,21 @@
            #:dump-json
            #:load-schema
            #:validate
+           #:read-file
            ))
 (in-package :json-schema)
 
 (defclass schema ()
   ((obj :initarg :obj)))
+
+(defun read-file (path)
+  (with-open-file (s path)
+    (load-json (slurp-stream s))))
+
+(defun slurp-stream (stream)
+  (let ((seq (make-string (file-length stream))))
+    (read-sequence seq stream)
+    seq))
 
 (defun %fix-key (keyname)
   (intern keyname "KEYWORD"))
