@@ -35,4 +35,6 @@
 
 ;; properties
 
+(is (validate-schema "{}" (json-schema:load-schema (json-schema:read-file "../fixtures/01.json"))) T "most basic schema")
+
 (finalize)

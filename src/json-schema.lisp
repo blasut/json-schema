@@ -13,16 +13,19 @@
            #:load-schema
            #:validate
            #:read-file
+           #:validate-schema
            ))
 (in-package :json-schema)
 
 (defclass schema ()
   ((obj :initarg :obj)))
 
-(defun read-file (path)
-  (with-open-file (s path)
-    (load-json (slurp-stream s))))
+(defmethod validate-schema ((schema schema) (json string))
+  (let ((json (load-json json)))
+    (let ((errors (%validate json (slot-value schema 'obj) :schema nil)))
+      (values (not errors) errors))))
 
+; use read-json-from-source ???
 (defun read-file (path)
   (with-open-file (stream path)
     (let ((seq (make-string (file-length stream))))
@@ -122,6 +125,18 @@
       (call-validator data (%fix-key rule-name) rule-body))
     rule-body))
 
+(defvalidator |title| (data body)
+  ())
+
+(defvalidator |required| (data body)
+  ())
+
+(defvalidator |items| (data body)
+  ())
+
+(defvalidator |$schema| (data body)
+  ())
+
 (defvalidator |type| (data type-desc)
   (let ((actual-type (get-type-name data)))
     (unless (satisfies-type actual-type type-desc)
@@ -135,7 +150,11 @@
       (lambda (prop-name prop-schema)
         (multiple-value-bind (property property-exists)
             (st-json:getjso prop-name data)
-          (if property-exists 
+          (format *standard-output* "~a" prop-name)
+          (format *standard-output* "~S" data)
+;          (format *standard-output* "~a" prop-schema)
+          (format *standard-output* "~a" property-exists)
+          (if property-exists
             (call-validator property :schema prop-schema prop-name)
             (when (eql (st-json:getjso "required" prop-schema) :true)
               (validation-error "Required property ~a is missing." (dump-json prop-name))))))
